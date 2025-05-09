@@ -13,7 +13,7 @@
 /* ---------- definitions ---------- */
 
 // system
-#define APP_VER         "v0.9.33 beta6"
+#define APP_VER         "v0.9.33 beta6-NG"
 #define DEBUG_ENABLED   false
 #define HELP_LINES      35  // must be <= OVLTXT_LINES
 #define SCENE_INIT      0
@@ -34,6 +34,9 @@
 #define SETTINGS_FILE   "settings.xml"
 #define SNM_SYS_SPCLANG "system:speechJpn"
 #define SNM_SYS_STAT    "system:sysStat"
+#define SNM_DTCTALL_FRM "system:allFrameDetect"
+#define SNM_GTE_NUM_THR "system:minimumGateCount"
+#define SNM_GTESIZE_THR "system:smallSizeGateCheck"
 #define SNM_OSCMON_ENA  "oscMonitor:enabled"
 #define SNM_OSCMON_HOST "oscMonitor:host"
 #define SNM_OSCMON_PORT "oscMonitor:port"
@@ -48,6 +51,8 @@
 #define SNM_RACE_MINLAP "race:minLapTime"
 #define SNM_RACE_STAGGR "race:staggStart"
 #define SNM_RACE_LAPTMO "race:lapAfterTmo"
+
+
 #define BTTN_FSCR_FILE  "system/button_fullscreen.png"
 #define BTTN_QUIT_FILE  "system/button_quit.png"
 #define BTTN_SETT_FILE  "system/button_settings.png"
@@ -60,6 +65,7 @@
 // camera profile
 #define CAM_FPV_FILE    "camera/fpv.xml"
 #define CFNM_NAME       "camera:name"
+#define CFNM_CAMNUM     "camera:camnum"
 #define CFNM_GRAB_W     "camera:grab:width"
 #define CFNM_GRAB_H     "camera:grab:height"
 #define CFNM_CROP_X     "camera:crop:x"
@@ -181,7 +187,11 @@
 // gamepad
 #define GPAD_MAX_DEVS   4
 #define GPAD_ALT_BTN    4
+//GATE DETECT FREQUENCY
+#define DTCT_ALL_FRAME  false
 
+
+#define DTCT_SML_SIZE   true
 /* ---------- classes ---------- */
 
 class tvpCamView {
@@ -201,6 +211,12 @@ public:
     int posXTarget;
     int posYTarget;
     int posYWideTarget;
+    int grabW;
+    int grabH;
+    int cropX;
+    int cropY;
+    int cropW;
+    int cropH;
     float imageScale;
     bool needCrop;
     bool needResize;
@@ -259,6 +275,7 @@ public:
 class tvpCamProf {
 public:
     bool enabled;
+    int camnum;
     string name;
     int grabW;
     int grabH;
@@ -317,6 +334,7 @@ string getUserLocaleName();
 void toggleSysStat();
 // view
 void grabberUpdateResize(int);
+void grabberUpdateResizeMulti();
 void toggleCameraSolo(int);
 void enableCameraSolo(int);
 void resetCameraSolo();
