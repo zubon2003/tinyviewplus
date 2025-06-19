@@ -2767,8 +2767,18 @@ void speakAny(string lang, string text) {
 #ifdef TARGET_LINUX
     int pid = fork();
     if (pid == 0) {
-        // Use speech-dispatcher
-        execlp("spd-say", "-w", "-r", "15", "-t", "female1", "-l", lang.c_str(), text.c_str(), NULL);
+        if (lang == "en") {
+            // Use speech-dispatcher for english
+            execlp("spd-say", "-w", "-r", "15", "-t", "female1", "-l", lang.c_str(), text.c_str(), NULL);
+        } else if (lang == "ja"){
+            // Use openjtalk for japanese
+            execlp("sh", "sh", "-c",
+                    ("echo '" + std::string(text.c_str()) + "' | open_jtalk"
+                     " -x /var/lib/mecab/dic/open-jtalk/naist-jdic"
+                     " -m /usr/share/hts-voice/nitech-jp-atr503-m001/nitech_jp_atr503_m001.htsvoice"
+                     " -r 1.0 | aplay").c_str(),
+                    NULL);
+        }
         OF_EXIT_APP(-1);
     }
 #endif /* TARGET_LINUX */
