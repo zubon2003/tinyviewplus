@@ -1,5 +1,6 @@
 <camera>
-    <name>HD Device Name</name>
+    <name>C8 USB3.0 Video</name>
+    <camnum>4</camnum>
     <description>16:9</description>
     <grab>
         <width>1280</width>
@@ -14,4 +15,5 @@
     <draw>
         <aspectRatio>16:9</aspectRatio>
     </draw>
+    <fourCamHorizontal>1</fourCamHorizontal>
 </camera>

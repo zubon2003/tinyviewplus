@@ -1,5 +1,5 @@
 <camera>
-    <name>USB[2-3] Video</name>
+    <name>C8 USB3.0 Video</name>
     <camnum>4</camnum>
     <description>4:3</description>
     <grab>
@@ -15,4 +15,5 @@
     <draw>
         <aspectRatio>4:3</aspectRatio>
     </draw>
+    <fourCamHorizontal>1</fourCamHorizontal>
 </camera>

@@ -37,6 +37,7 @@ int cameraNum;
 int cameraNumVisible;
 int cameraIdxSolo;
 bool cameraTrimEnabled;
+bool b4CamHorizontal;
 bool fullscreenEnabled;
 int cameraLapHistMode;
 bool cameraFrameEnabled;
@@ -110,6 +111,7 @@ void setupInit() {
     myFontInfoWatch.load(FONT_M_FILE, WATCH_HEIGHT);
     loadOverlayFont();
     cameraTrimEnabled = DFLT_CAM_TRIM;
+    b4CamHorizontal = DFLT_4CAM_HORIZONTAL;
     fullscreenEnabled = DFLT_FSCR_ENBLD;
     cameraLapHistMode = DFLT_CAM_LAPHST;
     cameraFrameEnabled = DFLT_CAM_FRAMED;
@@ -320,6 +322,7 @@ void loadCameraProfileFile() {
     p->cropW = s->getValue(CFNM_CROP_W, CAMERA_WIDTH);
     p->cropH = s->getValue(CFNM_CROP_H, CAMERA_HEIGHT);
     p->drawAspr = s->getValue(CFNM_DRAW_ASPR, "4:3");
+    b4CamHorizontal = s->getValue(SNM_VIEW_4CAMHOR, DFLT_4CAM_HORIZONTAL);
     // crop?
     if (p->cropX == 0 && p->cropY == 0 && p->cropW == p->grabW && p->cropH == p->grabH) {
         p->needCrop = false;
@@ -1101,7 +1104,7 @@ void drawCameraLapTime(int idx, bool issub) {
         if (cameraLapHistMode == LAPHIST_MD_OFF || laps < 2 || camView[i].moveSteps > 0) {
             return;
         }
-        if (cameraLapHistMode == LAPHIST_MD_OUT && cameraNumVisible == 3 && cameraIdxSolo == -1) {
+        if (cameraLapHistMode == LAPHIST_MD_OUT && (((cameraNumVisible == 3) || ((cameraNumVisible == 4) && b4CamHorizontal)) && cameraIdxSolo == -1)) {
             isout = true;
         } else {
             isout = false;
@@ -2110,35 +2113,70 @@ void setViewParams() {
             break;
         case 4:
             if (cameraIdxSolo == -1) { // solo mode off
-                // 1st camera
-                idx = getCameraIdxNthVisibleAll(1);
-                camView[idx].moveSteps = MOVE_STEPS;
-                camView[idx].heightTarget = (height / 2) - 1;
-                camView[idx].widthTarget = camView[idx].heightTarget * CAMERA_RATIO;
-                camView[idx].posXTarget = (width / 2) - (camView[idx].widthTarget + 1);
-                camView[idx].posYTarget = 0;
-                // 2nd camera
-                idx = getCameraIdxNthVisibleAll(2);
-                camView[idx].moveSteps = MOVE_STEPS;
-                camView[idx].heightTarget = (height / 2) - 1;
-                camView[idx].widthTarget = camView[idx].heightTarget * CAMERA_RATIO;
-                camView[idx].posXTarget = (width / 2) + 1;
-                camView[idx].posYTarget = 0;
-                // 3rd camera
-                idx = getCameraIdxNthVisibleAll(3);
-                camView[idx].moveSteps = MOVE_STEPS;
-                camView[idx].heightTarget = (height / 2) - 1;
-                camView[idx].widthTarget = camView[idx].heightTarget * CAMERA_RATIO;
-                camView[idx].posXTarget = (width / 2) - (camView[idx].widthTarget + 1);
-                camView[idx].posYTarget = height - camView[idx].heightTarget;
-                // 4th camera
-                idx = getCameraIdxNthVisibleAll(4);
-                camView[idx].moveSteps = MOVE_STEPS;
-                camView[idx].heightTarget = (height / 2) - 1;
-                camView[idx].widthTarget = camView[idx].heightTarget * CAMERA_RATIO;
-                camView[idx].posXTarget = (width / 2) + 1;
-                camView[idx].posYTarget = height - camView[idx].heightTarget;
-            } else { // solo mode off
+                if (!b4CamHorizontal) { // 2x2 layout (current behavior)
+                    // 1st camera
+                    idx = getCameraIdxNthVisibleAll(1);
+                    camView[idx].moveSteps = MOVE_STEPS;
+                    camView[idx].heightTarget = (height / 2) - 1;
+                    camView[idx].widthTarget = camView[idx].heightTarget * CAMERA_RATIO;
+                    camView[idx].posXTarget = (width / 2) - (camView[idx].widthTarget + 1);
+                    camView[idx].posYTarget = 0;
+                    // 2nd camera
+                    idx = getCameraIdxNthVisibleAll(2);
+                    camView[idx].moveSteps = MOVE_STEPS;
+                    camView[idx].heightTarget = (height / 2) - 1;
+                    camView[idx].widthTarget = camView[idx].heightTarget * CAMERA_RATIO;
+                    camView[idx].posXTarget = (width / 2) + 1;
+                    camView[idx].posYTarget = 0;
+                    // 3rd camera
+                    idx = getCameraIdxNthVisibleAll(3);
+                    camView[idx].moveSteps = MOVE_STEPS;
+                    camView[idx].heightTarget = (height / 2) - 1;
+                    camView[idx].widthTarget = camView[idx].heightTarget * CAMERA_RATIO;
+                    camView[idx].posXTarget = (width / 2) - (camView[idx].widthTarget + 1);
+                    camView[idx].posYTarget = height - camView[idx].heightTarget;
+                    // 4th camera
+                    idx = getCameraIdxNthVisibleAll(4);
+                    camView[idx].moveSteps = MOVE_STEPS;
+                    camView[idx].heightTarget = (height / 2) - 1;
+                    camView[idx].widthTarget = camView[idx].heightTarget * CAMERA_RATIO;
+                    camView[idx].posXTarget = (width / 2) + 1;
+                    camView[idx].posYTarget = height - camView[idx].heightTarget;
+                } else { // 4x1 horizontal layout
+                    int camWidth = (width / 4) - 1; // Subtract 1 for spacing
+                    int camHeight = camWidth / CAMERA_RATIO;
+                    //int yOffset = (height / 2) - (camHeight / 2); // Vertically centered
+                    int yOffset = 0;
+                    // 1st camera
+                    idx = getCameraIdxNthVisibleAll(1);
+                    camView[idx].moveSteps = MOVE_STEPS;
+                    camView[idx].widthTarget = camWidth;
+                    camView[idx].heightTarget = camHeight;
+                    camView[idx].posXTarget = 0;
+                    camView[idx].posYTarget = yOffset;
+                    // 2nd camera
+                    idx = getCameraIdxNthVisibleAll(2);
+                    camView[idx].moveSteps = MOVE_STEPS;
+                    camView[idx].widthTarget = camWidth;
+                    camView[idx].heightTarget = camHeight;
+                    camView[idx].posXTarget = camWidth + 2; // Add 2 for spacing
+                    camView[idx].posYTarget = yOffset;
+                    // 3rd camera
+                    idx = getCameraIdxNthVisibleAll(3);
+                    camView[idx].moveSteps = MOVE_STEPS;
+                    camView[idx].widthTarget = camWidth;
+                    camView[idx].heightTarget = camHeight;
+                    camView[idx].posXTarget = (camWidth * 2) + 4; // Add 4 for spacing
+                    camView[idx].posYTarget = yOffset;
+                    // 4th camera
+                    idx = getCameraIdxNthVisibleAll(4);
+                    camView[idx].moveSteps = MOVE_STEPS;
+                    camView[idx].widthTarget = camWidth;
+                    camView[idx].heightTarget = camHeight;
+                    camView[idx].posXTarget = (camWidth * 3) + 6; // Add 6 for spacing
+                    camView[idx].posYTarget = yOffset;
+                }
+            } else { // solo mode on
                 // main camera
                 idx = cameraIdxSolo;
                 camView[idx].moveSteps = MOVE_STEPS;

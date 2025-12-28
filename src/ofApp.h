@@ -13,7 +13,7 @@
 /* ---------- definitions ---------- */
 
 // system
-#define APP_VER         "v0.9.33 beta6-NG"
+#define APP_VER         "v0.9.33 beta7-NG"
 #define DEBUG_ENABLED   false
 #define HELP_LINES      35  // must be <= OVLTXT_LINES
 #define SCENE_INIT      0
@@ -43,6 +43,7 @@
 #define SNM_VIEW_FLLSCR "view:fullscreen"
 #define SNM_VIEW_BGIMG  "view:bgImage"
 #define SNM_VIEW_CAMTRM "view:camTrim"
+#define SNM_VIEW_4CAMHOR "camera:fourCamHorizontal"
 #define SNM_VIEW_CAMFRM "view:camFrame"
 #define SNM_VIEW_LAPHST "view:lapHistMode"
 #define SNM_RACE_ARMODE "race:arMode"
@@ -129,6 +130,7 @@
 #define DFLT_CAM_TRIM   false
 #define DFLT_CAM_LAPHST LAPHIST_MD_OFF
 #define DFLT_CAM_FRAMED false
+#define DFLT_4CAM_HORIZONTAL false
 #define ALIGN_LEFT      0
 #define ALIGN_CENTER    1
 #define ALIGN_RIGHT     2
